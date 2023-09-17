@@ -2,7 +2,111 @@
     ViewData["Title"] = "Home Page";
 }
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+
+<div class="container">
+  <div class="row">
+    <canvas id="temperatureTrendChart"></canvas>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col">
+      <div id="hottest-city-card" class="card">
+        <img class="card-img-top object-fit-cover" style="height: 18rem;" src="https://images.unsplash.com/photo-1447601932606-2b63e2e64331?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3261&q=80" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">Hottest City</h5>
+          <p class="card-text">
+            <span>City name: </span><span id="city-name"></span>
+          </p>
+          <p class="card-text">
+            <span>Total number of days with temperature exceeding 30 degrees Celsius: </span><span id="count"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div id="moistest-city-card" class="card">
+        <img class="card-img-top object-fit-cover" style="height: 18rem;" src="https://images.unsplash.com/photo-1625135966225-a01cb9fd9969?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2039&q=80" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">Moistest City</h5>
+          <p class="card-text">
+              <span>City name: </span><span id="city-name"></span>
+          </p>
+          <p class="card-text">
+              <span>Average humidity: </span><span id="average"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    const ctx = document.getElementById('temperatureTrendChart');
+
+    const cityName = "Singapore";
+    const variableName = "Temperature";
+    const threshold = 25;
+    $.ajax({
+      url: `/api/weather/variables?cityName=${cityName}&variableName=${variableName}`,
+      success: function( result ) {
+        const labels = result.map(function(r) { 
+          return r.timestamp
+        });
+        const temperatures = result.map(function(r) {
+          return r.value
+        });
+        const thresholds = result.map(function(r) {
+          return threshold
+        });
+
+        new Chart(ctx, {
+          data: {
+            datasets: [{
+              type: 'line',
+              label: 'Temperature',
+              data: temperatures,
+              borderWidth: 1
+            }, {
+              type: 'line',
+              label: 'Threshold',
+              data: thresholds,
+              borderWidth: 1,
+              fill: 'origin',
+            }],
+            labels: labels,
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+    })
+
+    $.ajax({
+        url: "/api/weather/hottestCity",
+        success: function( result ) {
+          $( "#hottest-city-card #city-name" ).text(result.cityName);
+          $( "#hottest-city-card #count" ).text(result.count);
+        }
+    });
+    $.ajax({
+        url: "/api/weather/moistestCity",
+        success: function( result ) {
+          $( "#moistest-city-card #city-name" ).text(result.cityName);
+          $( "#moistest-city-card #average" ).text(result.average);
+        }
+    });
+  });
+</script>
