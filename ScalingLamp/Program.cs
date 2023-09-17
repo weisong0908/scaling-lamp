@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ScalingLamp.Persistence;
+using ScalingLamp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ScalingLampContext>(optionsAction => optionsAction.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IVariableRepository, VariableRepository>();
+builder.Services.AddScoped<IWeatherService, WeatherService>();
 
 var app = builder.Build();
 
