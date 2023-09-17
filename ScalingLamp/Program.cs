@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ScalingLampContext>(optionsAction => optionsAction.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<IVariableRepository, VariableRepository>();
 
 var app = builder.Build();
 
