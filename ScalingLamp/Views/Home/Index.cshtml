@@ -9,8 +9,44 @@
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
-
 <div class="container">
+  <form id="temperature-form" style="width: 20rem; margin: auto">
+    <div class="form-group">
+      <label for="temperature-form-threshold">Threshold</label>
+      <input type="number" step="1" min="1" class="form-control" id="temperature-form-threshold" name="temperature-form-threshold" value="25">
+    </div>
+    <div class="form-group">
+      <label for="temperature-form-fromDate">From Date</label>
+      <input type="date" class="form-control" id="temperature-form-fromDate" name="temperature-form-fromDate" value="2023-01-01">
+    </div>
+    <div class="form-group">
+      <label for="temperature-form-toDate">To Date</label>
+      <input type="date" class="form-control" id="temperature-form-toDate" name="temperature-form-toDate" value="2023-01-31">
+    </div>
+    <div class="form-group">
+      <label for="temperature-form-cityName">City</label>
+      <select class="form-control" id="temperature-form-cityName" name="temperature-form-cityName" value="Singapore">
+        <option value="Singapore">Singapore</option>
+        <option value="Kuala Lumpur">Kuala Lumpur</option>
+        <option value="Bangalore">Bangalore</option>
+        <option value="Colombo">Colombo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="temperature-form-line-colour">Temperature line colour</label>
+      <input type="text" class="form-control" id="temperature-form-line-colour" name="temperature-form-line-colour" value="">
+    </div>
+    <div class="form-group">
+      <label for="temperature-form-threshold-high-colour">High threshold colour</label>
+      <input type="text" class="form-control" id="temperature-form-threshold-high-colour" name="temperature-form-threshold-high-colour" value="">
+    </div>
+    <div class="form-group">
+      <label for="temperature-form-threshold-low-colour">Low threshold colour</label>
+      <input type="text" class="form-control" id="temperature-form-threshold-low-colour" name="temperature-form-threshold-low-colour" value="">
+    </div>
+    <button id="temperature-form-update-button" class="btn btn-primary">Update Chart</button>
+  </form>
+  <br />
   <div class="row">
     <canvas id="temperatureTrendChart"></canvas>
   </div>
@@ -50,49 +86,42 @@
 <script>
   $(document).ready(function () {
     const ctx = document.getElementById('temperatureTrendChart');
-
-    const cityName = "Singapore";
-    const variableName = "Temperature";
-    const threshold = 25;
-    $.ajax({
-      url: `/api/weather/variables?cityName=${cityName}&variableName=${variableName}`,
-      success: function( result ) {
-        const labels = result.map(function(r) { 
-          return r.timestamp
-        });
-        const temperatures = result.map(function(r) {
-          return r.value
-        });
-        const thresholds = result.map(function(r) {
-          return threshold
-        });
-
-        new Chart(ctx, {
-          data: {
-            datasets: [{
-              type: 'line',
-              label: 'Temperature',
-              data: temperatures,
-              borderWidth: 1
-            }, {
-              type: 'line',
-              label: 'Threshold',
-              data: thresholds,
-              borderWidth: 1,
-              fill: 'origin',
-            }],
-            labels: labels,
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
+    const chart = new Chart(ctx, {
+      data: {
+        datasets: [{
+          type: 'line',
+          label: 'Temperature',
+          data: [],
+          borderWidth: 1
+        }, {
+          type: 'line',
+          label: 'Low',
+          data: [],
+          borderWidth: 1,
+          fill: 'origin',
+        }, {
+          type: 'line',
+          label: 'High',
+          data: [],
+          borderWidth: 1,
+          fill: 'end',
+        }],
+        labels: [],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
           }
-        });
+        }
       }
-    })
+    });
+    updateChart(chart);
+    
+    $("#temperature-form-update-button").on("click", function (e) {
+      e.preventDefault();
+      updateChart(chart);
+    });
 
     $.ajax({
         url: "/api/weather/hottestCity",
@@ -109,4 +138,42 @@
         }
     });
   });
+
+  function updateChart(chart) {
+    const variableName = "Temperature";
+    const threshold = $("#temperature-form").find('input[name="temperature-form-threshold"]').val();
+    const cityName = $("#temperature-form").find('select[name="temperature-form-cityName"]').val();
+    const fromDate = $("#temperature-form").find('input[name="temperature-form-fromDate"]').val();
+    const toDate = $("#temperature-form").find('input[name="temperature-form-toDate"]').val();
+    const lineColour = $("#temperature-form").find('input[name="temperature-form-line-colour"]').val();
+    const highThresholdColour = $("#temperature-form").find('input[name="temperature-form-threshold-high-colour"]').val();
+    const lowThresholdColour = $("#temperature-form").find('input[name="temperature-form-threshold-low-colour"]').val();
+
+    $.ajax({
+      url: `/api/weather/variables?cityName=${cityName}&variableName=${variableName}&startTimestamp=${fromDate}&endTimestamp=${toDate}`,
+      success: function( result ) {
+        const labels = result.map(function(r) { 
+          return new Date(r.timestamp).toLocaleDateString('en-SG')
+        });
+        const temperatures = result.map(function(r) {
+          return value = r.unit == '°F' ? (r.value - 32) * 5 /9 : r.value;
+        });
+        const thresholds = result.map(function(r) {
+          return threshold
+        });
+
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = temperatures;
+        chart.data.datasets[1].data = thresholds;
+        chart.data.datasets[2].data = thresholds;
+
+        chart.data.datasets[0].backgroundColor = lineColour || "rgba(54, 162, 235, 0.5)";
+        chart.data.datasets[0].borderColor = lineColour || "rgba(54, 162, 235, 0.5)";
+        chart.data.datasets[1].backgroundColor = lowThresholdColour || "rgba(255, 99, 132, 0.5)";
+        chart.data.datasets[2].backgroundColor = highThresholdColour || "rgba(255, 159, 64, 0.5)";
+        
+        chart.update();
+      } 
+    })
+  }
 </script>

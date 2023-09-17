@@ -17,11 +17,11 @@ namespace ScalingLamp.Controllers
         [HttpGet("variables")]
         public async Task<IActionResult> GetVariables(
             string? variableName,
-            DateTimeOffset? startTimesamp,
+            DateTimeOffset? startTimestamp,
             DateTimeOffset? endTimestamp,
             string? cityName)
         {
-            var variables = await _weatherService.GetVariablesAsync(variableName, startTimesamp, endTimestamp, cityName);
+            var variables = await _weatherService.GetVariablesAsync(variableName, startTimestamp, endTimestamp, cityName);
 
             return Ok(variables);
         }

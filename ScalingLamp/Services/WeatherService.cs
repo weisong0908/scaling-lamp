@@ -16,11 +16,11 @@ namespace ScalingLamp.Services
 
         public async Task<List<VariableDto>> GetVariablesAsync(
             string? variableName,
-            DateTimeOffset? startTimesamp,
+            DateTimeOffset? startTimestamp,
             DateTimeOffset? endTimestamp,
             string? cityName)
         {
-            var variables = await _variableRepository.GetVariablesAsync(variableName, startTimesamp, endTimestamp, cityName);
+            var variables = await _variableRepository.GetVariablesAsync(variableName, startTimestamp, endTimestamp, cityName);
 
             return variables
                 .Select(v => new VariableDto(v))
