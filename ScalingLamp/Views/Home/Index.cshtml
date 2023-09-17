@@ -117,7 +117,7 @@
         url: "/api/weather/moistestCity",
         success: function( moistestCity ) {
           $( "#moistest-city-card #city-name" ).text(moistestCity.cityName);
-          $( "#moistest-city-card #average" ).text(moistestCity.average);
+          $( "#moistest-city-card #average" ).text(moistestCity.average.toFixed(2) + "%");
         }
     });
   });
