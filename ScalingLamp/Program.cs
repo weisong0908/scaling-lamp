@@ -1,7 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using ScalingLamp.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<ScalingLampContext>(optionsAction => optionsAction.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+builder.Services.AddScoped<ICityRepository, CityRepository>();
 
 var app = builder.Build();
 
