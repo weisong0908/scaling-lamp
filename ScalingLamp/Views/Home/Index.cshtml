@@ -5,8 +5,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+  <h1 class="display-4">City, Temperature, and Humidity</h1>
+  <p>The temperature and humidity data of selected cities.</p>
 </div>
 
 <div class="container">
@@ -25,11 +25,7 @@
     </div>
     <div class="form-group">
       <label for="temperature-form-cityName">City</label>
-      <select class="form-control" id="temperature-form-cityName" name="temperature-form-cityName" value="Singapore">
-        <option value="Singapore">Singapore</option>
-        <option value="Kuala Lumpur">Kuala Lumpur</option>
-        <option value="Bangalore">Bangalore</option>
-        <option value="Colombo">Colombo</option>
+      <select class="form-control" id="temperature-form-cityName" name="temperature-form-cityName">
       </select>
     </div>
     <div class="form-group">
@@ -44,11 +40,12 @@
       <label for="temperature-form-threshold-low-colour">Low threshold colour</label>
       <input type="text" class="form-control" id="temperature-form-threshold-low-colour" name="temperature-form-threshold-low-colour" value="">
     </div>
+    <br />
     <button id="temperature-form-update-button" class="btn btn-primary">Update Chart</button>
   </form>
   <br />
   <div class="row">
-    <canvas id="temperatureTrendChart"></canvas>
+    <canvas id="temperature-chart"></canvas>
   </div>
   <br />
   <div class="row">
@@ -85,26 +82,67 @@
 
 <script>
   $(document).ready(function () {
-    const ctx = document.getElementById('temperatureTrendChart');
-    const chart = new Chart(ctx, {
+    const chart = initialiseChart();
+
+    //load all available cities as options
+    $.ajax({
+      url: "/api/weather/cities",
+      success: function( cities ) {
+        $("#temperature-form").find('select[name="temperature-form-cityName"]').val(cities[0].cityName);
+        for(city of cities) {
+          $("#temperature-form").find('select[name="temperature-form-cityName"]')
+            .append(new Option(city.cityName, city.cityName));
+        }
+        updateChart(chart);
+      }
+    })
+
+    //re-render charts when temperature form is updated
+    $("#temperature-form-update-button").on("click", function (e) {
+      e.preventDefault();
+      updateChart(chart);
+    });
+
+    //get hottest city
+    $.ajax({
+        url: "/api/weather/hottestCity",
+        success: function( hottestCity ) {
+          $( "#hottest-city-card #city-name" ).text(hottestCity.cityName);
+          $( "#hottest-city-card #count" ).text(hottestCity.count);
+        }
+    });
+
+    //get moistest city
+    $.ajax({
+        url: "/api/weather/moistestCity",
+        success: function( moistestCity ) {
+          $( "#moistest-city-card #city-name" ).text(moistestCity.cityName);
+          $( "#moistest-city-card #average" ).text(moistestCity.average);
+        }
+    });
+  });
+
+  function initialiseChart() {
+    const ctx = document.getElementById('temperature-chart');
+    return new Chart(ctx, {
       data: {
         datasets: [{
-          type: 'line',
-          label: 'Temperature',
+          type: "line",
+          label: "Temperature",
           data: [],
           borderWidth: 1
         }, {
-          type: 'line',
-          label: 'Low',
+          type: "line",
+          label: "Low",
           data: [],
           borderWidth: 1,
-          fill: 'origin',
+          fill: "origin",
         }, {
-          type: 'line',
-          label: 'High',
+          type: "line",
+          label: "High",
           data: [],
           borderWidth: 1,
-          fill: 'end',
+          fill: "end",
         }],
         labels: [],
       },
@@ -116,28 +154,7 @@
         }
       }
     });
-    updateChart(chart);
-    
-    $("#temperature-form-update-button").on("click", function (e) {
-      e.preventDefault();
-      updateChart(chart);
-    });
-
-    $.ajax({
-        url: "/api/weather/hottestCity",
-        success: function( result ) {
-          $( "#hottest-city-card #city-name" ).text(result.cityName);
-          $( "#hottest-city-card #count" ).text(result.count);
-        }
-    });
-    $.ajax({
-        url: "/api/weather/moistestCity",
-        success: function( result ) {
-          $( "#moistest-city-card #city-name" ).text(result.cityName);
-          $( "#moistest-city-card #average" ).text(result.average);
-        }
-    });
-  });
+  }
 
   function updateChart(chart) {
     const variableName = "Temperature";
@@ -151,14 +168,14 @@
 
     $.ajax({
       url: `/api/weather/variables?cityName=${cityName}&variableName=${variableName}&startTimestamp=${fromDate}&endTimestamp=${toDate}`,
-      success: function( result ) {
-        const labels = result.map(function(r) { 
-          return new Date(r.timestamp).toLocaleDateString('en-SG')
+      success: function( variables ) {
+        const labels = variables.map(function(r) { 
+          return new Date(r.timestamp).toLocaleDateString("en-SG");
         });
-        const temperatures = result.map(function(r) {
+        const temperatures = variables.map(function(r) {
           return value = r.unit == '°F' ? (r.value - 32) * 5 /9 : r.value;
         });
-        const thresholds = result.map(function(r) {
+        const thresholds = variables.map(function(r) {
           return threshold
         });
 

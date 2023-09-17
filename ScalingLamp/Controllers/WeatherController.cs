@@ -15,6 +15,14 @@ namespace ScalingLamp.Controllers
             _weatherService = weatherService;
         }
 
+        [HttpGet("cities")]
+        public async Task<IActionResult> GetCities()
+        {
+            var cities = await _weatherService.GetCitiesAsync();
+
+            return Ok(cities.Select(c => new CityDto(c)));
+        }
+
         [HttpGet("variables")]
         public async Task<IActionResult> GetVariables(
             string? variableName,

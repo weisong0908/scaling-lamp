@@ -13,9 +13,12 @@ namespace ScalingLamp.Infrastructure.Persistence
             _dbContext = dbContext;
         }
 
-        public async Task<List<City>> GetCitiesAsync()
+        public async Task<List<CityDao>> GetCitiesAsync()
         {
-            return await _dbContext.Cities.ToListAsync();
+            var cities = await _dbContext.Cities
+                .ToListAsync();
+
+            return cities.Select(c => new CityDao(c)).ToList();
         }
 
         public async Task<HottestCityDao?> GetHottestCityAsync()

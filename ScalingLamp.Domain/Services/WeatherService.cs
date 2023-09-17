@@ -17,6 +17,11 @@ namespace ScalingLamp.Domain.Services
             _cityRepository = cityRepository;
             _variableRepository = variableRepository;
         }
+        
+        public async Task<List<CityDao>> GetCitiesAsync()
+        {
+            return await _cityRepository.GetCitiesAsync();
+        }
 
         public async Task<List<VariableDao>> GetVariablesAsync(
             string? variableName,

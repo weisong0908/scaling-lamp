@@ -5,7 +5,7 @@ namespace ScalingLamp.Domain.Persistence
 {
     public interface ICityRepository
     {
-        Task<List<City>> GetCitiesAsync();
+        Task<List<CityDao>> GetCitiesAsync();
         Task<HottestCityDao?> GetHottestCityAsync();
         Task<MoistestCityDao?> GetMoistestCityAsync();
     }
