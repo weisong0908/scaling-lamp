@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using ScalingLamp.Models.DAOs;
+using ScalingLamp.Domain.Models.DAOs;
+using ScalingLamp.Domain.Persistence;
 
-namespace ScalingLamp.Persistence
+namespace ScalingLamp.Infrastructure.Persistence
 {
     public class VariableRepository : IVariableRepository
     {

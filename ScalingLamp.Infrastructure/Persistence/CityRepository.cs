@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ScalingLamp.Models.DAOs;
-using ScalingLamp.Models.DomainModels;
+using ScalingLamp.Domain.Persistence;
+using ScalingLamp.Domain.Models.DAOs;
+using ScalingLamp.Domain.Models.DomainModels;
 
-namespace ScalingLamp.Persistence
+namespace ScalingLamp.Infrastructure.Persistence
 {
     public class CityRepository : ICityRepository
     {

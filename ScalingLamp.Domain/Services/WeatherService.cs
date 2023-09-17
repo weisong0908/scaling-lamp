@@ -1,7 +1,11 @@
-using ScalingLamp.Models.DTOs;
-using ScalingLamp.Persistence;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ScalingLamp.Domain.Models.DAOs;
+using ScalingLamp.Domain.Persistence;
 
-namespace ScalingLamp.Services
+namespace ScalingLamp.Domain.Services
 {
     public class WeatherService : IWeatherService
     {
@@ -14,31 +18,30 @@ namespace ScalingLamp.Services
             _variableRepository = variableRepository;
         }
 
-        public async Task<List<VariableDto>> GetVariablesAsync(
+        public async Task<List<VariableDao>> GetVariablesAsync(
             string? variableName,
             DateTimeOffset? startTimestamp,
             DateTimeOffset? endTimestamp,
             string? cityName)
         {
-            var variables = await _variableRepository.GetVariablesAsync(variableName, startTimestamp, endTimestamp, cityName);
+            var variablesDao = await _variableRepository.GetVariablesAsync(variableName, startTimestamp, endTimestamp, cityName);
 
-            return variables
-                .Select(v => new VariableDto(v))
+            return variablesDao
                 .ToList();
         }
 
-        public async Task<HottestCityDto> GetHottestCityAsync()
+        public async Task<HottestCityDao?> GetHottestCityAsync()
         {
             var hottestCityDao = await _cityRepository.GetHottestCityAsync();
 
-            return new HottestCityDto(hottestCityDao);
+            return hottestCityDao;
         }
 
-        public async Task<MoistestCityDto> GetMoistestCityAsync()
+        public async Task<MoistestCityDao?> GetMoistestCityAsync()
         {
             var moistestCityDao = await _cityRepository.GetMoistestCityAsync();
 
-            return new MoistestCityDto(moistestCityDao);
+            return moistestCityDao;
         }
     }
 }

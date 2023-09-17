@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using ScalingLamp.Persistence;
-using ScalingLamp.Services;
+using ScalingLamp.Domain.Persistence;
+using ScalingLamp.Domain.Services;
+using ScalingLamp.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 

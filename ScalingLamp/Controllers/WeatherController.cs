@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using ScalingLamp.Services;
+using ScalingLamp.Domain.Services;
+using ScalingLamp.Models.DTOs;
 
 namespace ScalingLamp.Controllers
 {
@@ -23,7 +24,7 @@ namespace ScalingLamp.Controllers
         {
             var variables = await _weatherService.GetVariablesAsync(variableName, startTimestamp, endTimestamp, cityName);
 
-            return Ok(variables);
+            return Ok(variables.Select(v => new VariableDto(v)));
         }
 
         [HttpGet("hottestCity")]
@@ -31,7 +32,7 @@ namespace ScalingLamp.Controllers
         {
             var hottestCity = await _weatherService.GetHottestCityAsync();
             
-            return Ok(hottestCity);
+            return Ok(new HottestCityDto(hottestCity));
         }
 
         [HttpGet("moistestCity")]
@@ -39,7 +40,7 @@ namespace ScalingLamp.Controllers
         {
             var moistestCity = await _weatherService.GetMoistestCityAsync();
             
-            return Ok(moistestCity);
+            return Ok(new MoistestCityDto(moistestCity));
         }
     }
 }

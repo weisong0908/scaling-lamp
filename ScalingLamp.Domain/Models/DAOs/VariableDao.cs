@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ScalingLamp.Models.DomainModels;
+using ScalingLamp.Domain.Models.DomainModels;
 
-namespace ScalingLamp.Models.DAOs
+namespace ScalingLamp.Domain.Models.DAOs
 {
     public class VariableDao
     {

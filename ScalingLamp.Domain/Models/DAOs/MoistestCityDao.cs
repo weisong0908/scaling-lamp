@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ScalingLamp.Models.DAOs
+namespace ScalingLamp.Domain.Models.DAOs
 {
     public class MoistestCityDao
     {

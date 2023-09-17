@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ScalingLamp.Models.DAOs;
-using ScalingLamp.Models.DomainModels;
+using ScalingLamp.Domain.Models.DAOs;
 
 namespace ScalingLamp.Models.DTOs
 {

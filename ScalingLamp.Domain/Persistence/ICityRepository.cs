@@ -1,7 +1,7 @@
-using ScalingLamp.Models.DAOs;
-using ScalingLamp.Models.DomainModels;
+using ScalingLamp.Domain.Models.DAOs;
+using ScalingLamp.Domain.Models.DomainModels;
 
-namespace ScalingLamp.Persistence
+namespace ScalingLamp.Domain.Persistence
 {
     public interface ICityRepository
     {

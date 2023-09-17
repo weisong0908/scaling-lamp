@@ -1,6 +1,6 @@
-using ScalingLamp.Models.DAOs;
+using ScalingLamp.Domain.Models.DAOs;
 
-namespace ScalingLamp.Persistence
+namespace ScalingLamp.Domain.Persistence
 {
     public interface IVariableRepository
     {

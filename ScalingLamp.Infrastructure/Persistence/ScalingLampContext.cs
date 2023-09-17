@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ScalingLamp.Models.DomainModels;
+using ScalingLamp.Domain.Models.DomainModels;
 
-namespace ScalingLamp.Persistence;
+namespace ScalingLamp.Infrastructure.Persistence;
 
 public partial class ScalingLampContext : DbContext
 {
