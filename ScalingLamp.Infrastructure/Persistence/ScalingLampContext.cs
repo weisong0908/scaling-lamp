@@ -5,10 +5,6 @@ namespace ScalingLamp.Infrastructure.Persistence;
 
 public partial class ScalingLampContext : DbContext
 {
-    public ScalingLampContext()
-    {
-    }
-
     public ScalingLampContext(DbContextOptions<ScalingLampContext> options)
         : base(options)
     {
@@ -17,10 +13,6 @@ public partial class ScalingLampContext : DbContext
     public virtual DbSet<City> Cities { get; set; }
 
     public virtual DbSet<Variable> Variables { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=ScalingLamp;Encrypt=False;Password=P@ssword1234;User Id=sa");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

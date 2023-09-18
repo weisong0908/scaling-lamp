@@ -7,7 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<ScalingLampContext>(optionsAction => optionsAction.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+builder.Services.AddDbContext<ScalingLampContext>(
+    optionsAction => optionsAction.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
+    builder => builder.MigrationsAssembly("ScalingLamp")));
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IVariableRepository, VariableRepository>();
 builder.Services.AddScoped<IWeatherService, WeatherService>();
