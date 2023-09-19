@@ -13,6 +13,7 @@
 To run the project:
 ``` bash
 cd scaling-lamp\ScalingLamp
+dotnet ef database update
 dotnet run
 ```
 
