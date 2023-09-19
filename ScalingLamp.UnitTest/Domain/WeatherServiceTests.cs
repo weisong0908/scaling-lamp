@@ -39,10 +39,10 @@ namespace ScalingLamp.UnitTest.Domain
             };
 
             A.CallTo(() => _variableRepository.GetVariablesAsync(
-                A<string>.Ignored,
+                "Temperature",
                 A<DateTimeOffset>.Ignored,
                 A<DateTimeOffset>.Ignored,
-                A<string>.Ignored))
+                "My City"))
                 .Returns(_variables);
             
             _hottestCityDao = new HottestCityDao
@@ -62,11 +62,11 @@ namespace ScalingLamp.UnitTest.Domain
                 .Returns(_moistestCityDao);
         }
 
-        [Fact]
-        public async Task GetVariablesAsync_GivenValidInput_CompletesSuccessfully()
+        [Theory]
+        [InlineData("Temperature", "My City", 1)]
+        [InlineData("Temperature", "Not My City", 0)]
+        public async Task GetVariablesAsync_GivenInput_CompletesSuccessfully(string variableName, string cityName, int expectedCount)
         {
-            var cityName = "My City";
-            var variableName = "Temperature";
             var startDate = DateTimeOffset.Parse("2023-01-01");
             var endDate = DateTimeOffset.Parse("2023-01-31");
 
@@ -74,7 +74,7 @@ namespace ScalingLamp.UnitTest.Domain
             var result = service.GetVariablesAsync(variableName, startDate, endDate, cityName);
 
             Assert.True(result.IsCompletedSuccessfully);
-            Assert.Equal(_variables.Count, (await result).Count);
+            Assert.Equal(expectedCount, (await result).Count);
         }
 
         [Fact]
